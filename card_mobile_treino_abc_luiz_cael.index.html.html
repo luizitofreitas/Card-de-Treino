@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Card Treino ABC — Luiz (Cael)</title>
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121821;
+      --muted: #9aa4b2;
+      --text: #e6edf3;
+      --pri: #4ad295;
+      --pri-2: #3cb67a;
+      --warn: #ffd166;
+      --danger: #ff6b6b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text); line-height: 1.35;
+      background: linear-gradient(135deg, rgba(138,180,248,.16), rgba(74,210,149,.12), rgba(138,180,248,.16)) , var(--bg);
+      background-size: 200% 200%;
+      animation: floatBg 18s ease-in-out infinite;
+    }
+    @keyframes floatBg { 0%{background-position: 0% 50%} 50%{background-position: 100% 50%} 100%{background-position: 0% 50%} }
+
+    .wrap { max-width: 760px; margin: 0 auto; padding: 16px; }
+    header { position: sticky; top: 0; z-index: 5; backdrop-filter: blur(8px); background: rgba(11,15,20,.55); border-bottom: 1px solid #1f2630; }
+    header .inner { display: flex; gap: 12px; align-items: center; padding: 10px 16px; }
+    h1 { font-size: 18px; margin: 0; font-weight: 800; letter-spacing: .2px; display:flex; gap:10px; align-items:center; }
+    .badge { padding: 4px 10px; border-radius: 999px; background: #1f2630; color: var(--muted); font-size: 12px; border:1px solid #2a3340; }
+
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)); border: 1px solid #1f2630; border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; margin: 14px 0; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; }
+    input, textarea, button { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #2a323d; background: #0f141a; color: var(--text); outline: none; }
+    textarea { min-height: 80px; resize: vertical; }
+    input:focus, textarea:focus { border-color: #2f89ff; box-shadow: 0 0 0 3px rgba(47,137,255,.2); }
+
+    .btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; cursor: pointer; user-select: none; border: 0; letter-spacing:.2px }
+    .btn.primary { background: linear-gradient(180deg, var(--pri), var(--pri-2)); color: #0b1210; }
+    .btn.ghost { background: #0f141a; border: 1px solid #28303a; color: var(--text); }
+    .btn.warn { background: #2c220f; color: #ffd166; border: 1px solid #5d4b2a; }
+
+    .seg { display: inline-flex; gap: 6px; }
+    .seg button { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid #2a323d; background: #0f141a; color: var(--text); font-weight: 800; }
+    .seg button.active { background: #0f231a; border-color: #124e35; color: #4ad295; box-shadow: 0 0 0 2px rgba(74,210,149,.15); }
+
+    .exercise { border: 1px dashed #2a323d; border-radius: 14px; padding: 12px; margin-bottom: 10px; background: linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,0)); }
+    .ex-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; cursor:pointer; }
+    .ex-title { font-weight: 900; display:flex; align-items:center; gap:8px; }
+    .ex-title .chip { font-size: 11px; padding: 3px 8px; border-radius: 999px; border:1px solid #2a3340; background:#121821; color:#b8c2cf; }
+    .ex-meta { font-size: 12px; color: var(--muted); }
+    .opt { font-size: 11px; color: var(--warn); margin-left: 6px; }
+    .exercise.collapsed .ex-body{ display:none; }
+
+    .switch { display: inline-flex; align-items: center; gap: 8px; }
+
+    .footer { font-size: 12px; color: var(--muted); text-align: center; margin: 16px 0 40px; }
+    .small { font-size: 12px; }
+    .success { color: #a7f3d0; }
+    .err { color: #ff6b6b; }
+
+    .btn.small-btn{ width:auto; padding:8px 10px; font-size:12px; }
+    .emoji { font-size: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1><span class="emoji">🏋️‍♂️</span> Card Treino ABC — Luiz (Cael)</h1>
+      <span class="badge">progressão simples · RPE 7–8</span>
+    </div>
+  </header>
+  <div class="wrap">
+    <div id="installHelp" class="card" style="display:none; border-color:#2a3948">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">
+        <span class="emoji">📲</span>
+        <strong>Quer um ícone na Tela Inicial?</strong>
+      </div>
+      <div class="small" style="margin-bottom:8px">Você abriu este arquivo pelo caminho <code>file:/content:</code>. Nessa forma o Chrome <u>não mostra</u> “Adicionar à tela inicial”. Use uma das opções abaixo:</div>
+      <ol class="small" style="margin:0 0 10px 18px">
+        <li><strong>Atalho via Widget do Chrome</strong> — toque e segure na tela inicial → <em>Widgets</em> → arraste o <em>Atalho do Chrome</em> → cole o link abaixo → nome “Card Treino”.</li>
+        <li><strong>Hospedar online</strong> (GitHub Pages/Netlify) — aparece “Adicionar à tela inicial” e funciona offline.</li>
+      </ol>
+      <div class="row" style="margin-top:8px">
+        <div>
+          <label>Link deste arquivo</label>
+          <input id="fileLink" readonly />
+        </div>
+        <div style="display:flex; align-items:end">
+          <button id="btnCopyLink" class="btn ghost" type="button"><span class="emoji">📋</span> Copiar link</button>
+        </div>
+      </div>
+      <details style="margin-top:8px">
+        <summary class="small">Ver instruções rápidas</summary>
+        <div class="small" style="margin-top:6px">
+          <strong>Widget do Chrome:</strong> toque e segure na tela inicial → <em>Widgets</em> → <em>Chrome</em> → arraste o <em>Atalho</em> 1×1 → cole o link acima (começa com <code>content://</code> ou <code>file://</code>) → nomeie → <em>Adicionar</em>.
+          <br/><strong>GitHub Pages:</strong> crie um repositório com este arquivo como <code>index.html</code> → <em>Settings &gt; Pages</em> → habilite. Ao abrir por HTTPS, o menu do Chrome mostrará <em>Adicionar à tela inicial</em>.
+        </div>
+      </details>
+      <div style="margin-top:8px">
+        <button id="btnCloseHelp" class="btn warn" type="button"><span class="emoji">✖️</span> Fechar dica</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="date">Data</label>
+          <input type="date" id="date" />
+        </div>
+        <div>
+          <label>Treino do dia</label>
+          <div class="seg" role="tablist" aria-label="Treino">
+            <button id="btnA" class="active" aria-selected="true">A <span class="emoji">💥</span></button>
+            <button id="btnB">B <span class="emoji">🌀</span></button>
+            <button id="btnC">C <span class="emoji">🦵</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="small" style="margin-top:8px; display:flex; gap:8px; align-items:center">
+        <span class="emoji">📅</span>
+        <div><strong>Sugestão:</strong> Seg (A) · Qua (B) · Sex (C)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:6px">
+        <h2 style="margin:0; font-size:16px; display:flex; gap:8px; align-items:center"><span class="emoji">📋</span> Exercícios</h2>
+        <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap">
+          <button id="btnExpandAll" class="btn ghost small-btn" type="button"><span class="emoji">🔽</span> Expandir todos</button>
+          <button id="btnCollapseAll" class="btn ghost small-btn" type="button"><span class="emoji">🔼</span> Recolher todos</button>
+          <label class="switch small"><input id="hideOptional" type="checkbox" /> <span class="emoji">👁️‍🗨️</span> Ocultar opcionais</label>
+        </div>
+      </div>
+      <div id="exercicios"></div>
+    </div>
+
+    <div class="card">
+      <div class="row-3">
+        <div>
+          <label>RPE médio da sessão (1–10)</label>
+          <input id="rpeMedio" type="number" min="1" max="10" step="0.1" placeholder="ex.: 7.5" />
+        </div>
+        <div>
+          <label>Tempo total (min)</label>
+          <input id="duracao" type="number" min="10" max="180" step="1" placeholder="ex.: 65" />
+        </div>
+        <div style="display:flex; align-items:end; gap:6px">
+          <label style="width:100%">Exportar apenas preenchidos?</label>
+          <input id="onlyFilled" type="checkbox" style="width:auto" />
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label for="obsSessao">Observações da sessão</label>
+        <textarea id="obsSessao" placeholder="sono, dores, pump, técnica…"></textarea>
+      </div>
+      <div class="btns" style="margin-top:12px">
+        <button id="btnSave" class="btn primary"><span class="emoji">💾</span> Salvar no aparelho</button>
+        <button id="btnShare" class="btn ghost"><span class="emoji">📤</span> Compartilhar / Copiar</button>
+        <button id="btnClear" class="btn warn"><span class="emoji">🧹</span> Limpar</button>
+      </div>
+      <div class="btns" style="margin-top:8px; grid-template-columns: 1fr;">
+        <button id="btnExportAccum" class="btn ghost"><span class="emoji">📦</span> Exportar acumulado</button>
+      </div>
+      <div id="status" class="small" style="margin-top:8px"></div>
+      <div id="lastExport" class="small" style="margin-top:6px; color: var(--muted)"></div>
+    </div>
+
+    <div class="footer">Feito para você por Cael • <span class="emoji">🎯</span> Progrida com +1 rep por série ou +2,5 kg quando bater o topo com RPE ≤ 8.</div>
+  </div>
+
+  <script>
+    'use strict';
+    const $ = (s) => document.querySelector(s);
+
+    const templates = {
+      A: [
+        { nome: 'Supino reto (barra)', series: 4, reps: '6–8', descanso: 150 },
+        { nome: 'Supino inclinado (halteres)', series: 4, reps: '8–10', descanso: 90 },
+        { nome: 'Chest Press (máquina/Smith)', series: 3, reps: '8–12', descanso: 90 },
+        { nome: 'Crucifixo (cabo/peck-deck)', series: 3, reps: '12–15', descanso: 75 },
+        { nome: 'Mergulho na paralela (peito) — opcional', series: 3, reps: '8–12', descanso: 90, opcional: true },
+        { nome: 'Tríceps (corda/testa) — opcional', series: 2, reps: '10–12', descanso: 75, opcional: true },
+      ],
+      B: [
+        { nome: 'Barra fixa (ou Puxada alta)', series: 4, reps: '6–8', descanso: 150 },
+        { nome: 'Remada curvada (barra)', series: 4, reps: '6–8', descanso: 150 },
+        { nome: 'Remada baixa (polia)', series: 3, reps: '10–12', descanso: 90 },
+        { nome: 'Puxada neutra / Pulldown', series: 3, reps: '10–12', descanso: 90 },
+        { nome: 'Face Pull', series: 3, reps: '12–15', descanso: 60 },
+        { nome: 'Rosca direta (barra)', series: 3, reps: '8–10', descanso: 75 },
+        { nome: 'Rosca alternada (halteres)', series: 3, reps: '10–12', descanso: 75 },
+        { nome: 'Abdominal máquina / crunch', series: 3, reps: '12–20', descanso: 45 },
+      ],
+      C: [
+        { nome: 'Agachamento livre (ou Hack/Smith)', series: 4, reps: '5–8', descanso: 150 },
+        { nome: 'Terra Romeno', series: 4, reps: '6–10', descanso: 150 },
+        { nome: 'Leg Press', series: 3, reps: '10–12', descanso: 120 },
+        { nome: 'Desenvolvimento halteres', series: 3, reps: '6–10', descanso: 120 },
+        { nome: 'Elevação lateral', series: 3, reps: '12–20', descanso: 60 },
+        { nome: 'Prancha (segundos) — core', series: 3, reps: '45–60s', descanso: 45, core: true },
+      ],
+    };
+
+    let treinoAtual = 'A';
+    let startCollapsed = true;
+
+    function categoria(nome){
+      const n = nome.toLowerCase();
+      if(/supino|chest|crucifixo|peck/.test(n)) return {tag:'Peito', emoji:'💥'};
+      if(/remada|puxada|pulldown|barra fixa|face pull/.test(n)) return {tag:'Costas', emoji:'🌀'};
+      if(/agach|leg press|extensora|flexora|romeno|afundo|passada|panturrilha/.test(n)) return {tag:'Pernas', emoji:'🦵'};
+      if(/desenvolvimento|elevação/.test(n)) return {tag:'Ombros', emoji:'🎯'};
+      if(/tríceps|rosca|bíceps/.test(n)) return {tag:'Braços', emoji:'💪'};
+      if(/prancha|core|abdominal|crunch/.test(n)) return {tag:'Core', emoji:'🧩'};
+      return {tag:'Geral', emoji:'🏋️'};
+    }
+
+    function setTreino(t) {
+      treinoAtual = t;
+      startCollapsed = true;
+      document.querySelectorAll('.seg button').forEach(b=>b.classList.remove('active'));
+      $('#btn'+t).classList.add('active');
+      renderExercicios();
+      loadLocal();
+    }
+
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function todayStr(){ const d=new Date(); const y=d.getFullYear(); const m=pad(d.getMonth()+1); const da=pad(d.getDate()); return `${y}-${m}-${da}`; }
+    function key(){ return `cael_card_${$('#date').value}_${treinoAtual}`; }
+
+    function renderExercicios(){
+      const cont = $('#exercicios');
+      cont.innerHTML = '';
+      const hideOpt = $('#hideOptional').checked;
+      templates[treinoAtual].forEach((ex,idx)=>{
+        if(hideOpt && ex.opcional) return;
+        const isCore = !!ex.core;
+        const optTag = ex.opcional ? '<span class="opt">opcional</span>' : '';
+        const cat = categoria(ex.nome);
+        const bodyHtml = isCore ? `
+              <div class="row">
+                <div>
+                  <label>Tempo por série (segundos) — ex.: 60,60,45</label>
+                  <input id="tempo_${idx}" type="text" placeholder="ex.: 60,60,60" />
+                </div>
+                <div>
+                  <label>RPE (1–10)</label>
+                  <input id="rpe_${idx}" type="number" min="1" max="10" step="0.1" placeholder="ex.: 7.5" />
+                </div>
+              </div>` : `
+              <div class="row">
+                <div>
+                  <label>Reps realizadas (separe por vírgula)</label>
+                  <input id="reps_${idx}" type="text" placeholder="ex.: 8,8,7${ex.series>3?',6':''}" />
+                </div>
+                <div>
+                  <label>Carga (kg) por série</label>
+                  <input id="carga_${idx}" type="text" placeholder="ex.: 60,60,62.5" />
+                </div>
+              </div>
+              <div class="row">
+                <div>
+                  <label>RPE (1–10)</label>
+                  <input id="rpe_${idx}" type="number" min="1" max="10" step="0.1" placeholder="ex.: 8" />
+                </div>
+                <div>
+                  <label>Notas (opcional)</label>
+                  <input id="obs_${idx}" type="text" placeholder="ex.: pausa no peito, última forçou" />
+                </div>
+              </div>`;
+        const html = `
+          <div class="exercise" data-idx="${idx}">
+            <div class="ex-head" title="Toque para expandir/recolher">
+              <div class="ex-title"><span class="emoji">${cat.emoji}</span> ${ex.nome} <span class="chip">${cat.tag}</span> ${optTag}</div>
+              <div class="ex-meta">${ex.series}×${ex.reps} · descanso ~${ex.descanso}s</div>
+            </div>
+            <div class="ex-body">${bodyHtml}</div>
+          </div>`;
+        cont.insertAdjacentHTML('beforeend', html);
+      });
+      if (startCollapsed) { document.querySelectorAll('.exercise').forEach(el => el.classList.add('collapsed')); }
+    }
+
+    // Delegação de clique para expandir/recolher
+    document.addEventListener('click', (e)=>{
+      const head = e.target.closest('.ex-head');
+      if(!head) return;
+      const ex = head.closest('.exercise');
+      if(ex) ex.classList.toggle('collapsed');
+    });
+
+    function expandAll(){ document.querySelectorAll('.exercise').forEach(el=>el.classList.remove('collapsed')); startCollapsed=false; }
+    function collapseAll(){ document.querySelectorAll('.exercise').forEach(el=>el.classList.add('collapsed')); startCollapsed=true; }
+
+    function collect(){
+      const data = {
+        date: $('#date').value,
+        treino: treinoAtual,
+        rpeMedio: $('#rpeMedio').value,
+        duracao: $('#duracao').value,
+        obsSessao: $('#obsSessao').value,
+        exercicios: [],
+      };
+      templates[treinoAtual].forEach((ex,idx)=>{
+        const isCore = !!ex.core;
+        const item = { nome: ex.nome, series: ex.series, repsAlvo: ex.reps, descanso: ex.descanso, opcional: !!ex.opcional };
+        if(isCore){
+          item.tempo = ($('#tempo_'+idx) || {}).value || '';
+          item.rpe = ($('#rpe_'+idx) || {}).value || '';
+        } else {
+          item.reps = ($('#reps_'+idx) || {}).value || '';
+          item.carga = ($('#carga_'+idx) || {}).value || '';
+          item.rpe = ($('#rpe_'+idx) || {}).value || '';
+          item.obs = ($('#obs_'+idx) || {}).value || '';
+        }
+        data.exercicios.push(item);
+      });
+      return data;
+    }
+
+    function saveLocal(){
+      const data = collect();
+      if(!data.date){ setStatus('Selecione a data antes de salvar.', true); return; }
+      const prevRaw = localStorage.getItem(key());
+      if(prevRaw){
+        try { const prev = JSON.parse(prevRaw); if(prev && prev.exportedAt) data.exportedAt = prev.exportedAt; } catch(e) {}
+      }
+      data.savedAt = Date.now();
+      localStorage.setItem(key(), JSON.stringify(data));
+      setStatus('Sessão salva no aparelho. Dica: use Compartilhar para enviar por e-mail/WhatsApp.', false);
+    }
+
+    function loadLocal(){
+      const raw = localStorage.getItem(key());
+      if(!raw) { setStatus(''); return; }
+      const data = JSON.parse(raw);
+      $('#rpeMedio').value = data.rpeMedio || '';
+      $('#duracao').value = data.duracao || '';
+      $('#obsSessao').value = data.obsSessao || '';
+      templates[treinoAtual].forEach((ex,idx)=>{
+        const it = (data.exercicios||[])[idx] || {};
+        if(ex.core){
+          const tempo = $('#tempo_'+idx); if(tempo) tempo.value = it.tempo || '';
+          const rpe = $('#rpe_'+idx); if(rpe) rpe.value = it.rpe || '';
+        } else {
+          const reps = $('#reps_'+idx); if(reps) reps.value = it.reps || '';
+          const carga = $('#carga_'+idx); if(carga) carga.value = it.carga || '';
+          const rpe = $('#rpe_'+idx); if(rpe) rpe.value = it.rpe || '';
+          const obs = $('#obs_'+idx); if(obs) obs.value = it.obs || '';
+        }
+      });
+      setStatus('Sessão carregada do aparelho.', false);
+    }
+
+    function clearAll(){
+      document.querySelectorAll('#exercicios input, #exercicios textarea').forEach(el=>el.value='');
+      $('#rpeMedio').value=''; $('#duracao').value=''; $('#obsSessao').value='';
+      setStatus('Campos limpos. (Os dados salvos continuam no aparelho até você sobrescrever.)', false);
+    }
+
+    function setStatus(msg, isErr=false){
+      const el = $('#status');
+      el.textContent = msg;
+      el.className = 'small ' + (isErr ? 'err' : 'success');
+    }
+
+    // --- Export helpers (puro) ---
+    function sessionToText(d, onlyFilled){
+      let lines = [];
+      (d.exercicios||[]).forEach(ex=>{
+        const anyFilled = (ex.reps||ex.carga||ex.rpe||ex.obs||ex.tempo) && String(ex.reps||ex.carga||ex.tempo||'').trim()!=='';
+        if(onlyFilled && !anyFilled) return;
+        if(ex.core){
+          lines.push(`${d.date},${d.treino},${ex.nome},${ex.series},${ex.tempo||''},,${ex.descanso},${ex.rpe||''},${(d.obsSessao||'').split('\n').join(' ')}`);
+        } else {
+          lines.push(`${d.date},${d.treino},${ex.nome},${ex.series},${ex.reps||''},${ex.carga||''},${ex.descanso},${ex.rpe||''},${(ex.obs||d.obsSessao||'registrado via card').split('\n').join(' ')}`);
+        }
+      });
+      const header = 'data,treino,exercicio,series,reps,carga_kg,tempo_descanso_s,rpe,observacoes';
+      const sessao = `RPE_medio=${d.rpeMedio||''}; duracao_min=${d.duracao||''}; obs_sessao=${(d.obsSessao||'').split('\n').join(' ')}`;
+      return `# Sessão ${d.treino} — ${d.date}\n# ${sessao}\n${header}\n${lines.join('\n')}`;
+    }
+
+    function buildExportText(){
+      const d = collect();
+      return sessionToText(d, $('#onlyFilled').checked);
+    }
+
+    async function shareOrCopy(){
+      const text = buildExportText();
+      try {
+        if(navigator.share){
+          await navigator.share({ title: `Treino ${treinoAtual} — ${$('#date').value}`, text });
+          setStatus('Compartilhado com sucesso.', false);
+        } else if(navigator.clipboard){
+          await navigator.clipboard.writeText(text);
+          setStatus('Texto copiado. Cole no e-mail/WhatsApp.', false);
+        } else {
+          const blob = new Blob([text], {type:'text/plain'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `treino_${treinoAtual}_${$('#date').value}.txt`; a.click();
+          URL.revokeObjectURL(url);
+          setStatus('Arquivo .txt baixado com o registro.', false);
+        }
+      } catch (e) {
+        setStatus('Não foi possível compartilhar/copiar. Tente copiar manualmente: selecione o texto após exportar.', true);
+        console.error(e);
+      }
+    }
+
+    // --- Exportar acumulado ---
+    function updateLastExportLabel(){
+      const ts = Number(localStorage.getItem('cael_last_export_ts')||0);
+      const el = $('#lastExport');
+      if(!el) return;
+      if(!ts){ el.textContent = 'Último export: —'; return; }
+      try { el.textContent = 'Último export: ' + new Date(ts).toLocaleString(); }
+      catch(e){ el.textContent = 'Último export: ' + ts; }
+    }
+
+    async function exportAccum(){
+      const onlyFilled = $('#onlyFilled').checked;
+      const lastTs = Number(localStorage.getItem('cael_last_export_ts')||0);
+      let sessions = [];
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(!k || !k.startsWith('cael_card_')) continue;
+        try{
+          const raw = localStorage.getItem(k);
+          const d = JSON.parse(raw);
+          if(!d || !d.date || !d.treino) continue;
+          const alreadyExportedAt = Number(d.exportedAt||0);
+          if(alreadyExportedAt && lastTs && alreadyExportedAt > lastTs) continue;
+          sessions.push({key:k, data:d});
+        }catch(e){}
+      }
+      if(sessions.length===0){ setStatus('Nada novo para exportar. Salve sessões primeiro.', true); return; }
+
+      const order = {A:1, B:2, C:3};
+      sessions.sort((a,b)=>{
+        if(a.data.date===b.data.date){ return (order[a.data.treino]||9)-(order[b.data.treino]||9); }
+        return a.data.date.localeCompare(b.data.date);
+      });
+
+      const parts = sessions.map(s => sessionToText(s.data, onlyFilled));
+      const aggregated = parts.join('\n\n');
+
+      const stamp = new Date();
+      const y = stamp.getFullYear(); const m = String(stamp.getMonth()+1).padStart(2,'0'); const d2 = String(stamp.getDate()).padStart(2,'0');
+      const hh = String(stamp.getHours()).padStart(2,'0'); const mm = String(stamp.getMinutes()).padStart(2,'0');
+      const fname = `treinos_acumulado_${y}${m}${d2}_${hh}${mm}.txt`;
+      try {
+        if(navigator.share){
+          await navigator.share({ title: 'Treinos acumulados', text: aggregated });
+          setStatus('Acumulado compartilhado com sucesso.', false);
+        } else if(navigator.clipboard){
+          await navigator.clipboard.writeText(aggregated);
+          setStatus('Acumulado copiado. Cole no e-mail/WhatsApp.', false);
+        } else {
+          const blob = new Blob([aggregated], {type:'text/plain'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = fname; a.click();
+          URL.revokeObjectURL(url);
+          setStatus('Arquivo acumulado baixado.', false);
+        }
+      } catch(e){
+        setStatus('Falha ao exportar acumulado. Tente copiar manualmente.', true);
+        console.error(e);
+        return;
+      }
+
+      const nowTs = Date.now();
+      sessions.forEach(s=>{
+        try{
+          const d = s.data; d.exportedAt = nowTs; if(!d.savedAt) d.savedAt = nowTs; localStorage.setItem(s.key, JSON.stringify(d));
+        }catch(e){}
+      });
+      localStorage.setItem('cael_last_export_ts', String(nowTs));
+      updateLastExportLabel();
+    }
+
+    function isLocal(){ const href = location.href; return href.startsWith('file:') || href.startsWith('content:'); }
+    function copyLink(){ try{ navigator.clipboard.writeText(location.href); setStatus('Link copiado! Use no widget do Chrome.', false);}catch(e){ setStatus('Copie o link manualmente da barra de endereço.', true);} }
+    function hideInstallHelp(){ const box = document.getElementById('installHelp'); if(box) box.style.display = 'none'; }
+
+    // Self-tests simples
+    (function(){
+      const t = sessionToText({date:'2025-01-01', treino:'A', rpeMedio:'7.5', duracao:'60', obsSessao:'ok', exercicios:[{nome:'Teste', series:3, reps:'8,8,8', carga:'60,60,60', descanso:90, rpe:'8', obs:'n/a'}]}, true);
+      console.assert(/Sessão A — 2025-01-01/.test(t), 'sessionToText deve conter cabeçalho');
+    })();
+
+    (function init(){
+      // listeners
+      document.getElementById('btnA').addEventListener('click', ()=>setTreino('A'));
+      document.getElementById('btnB').addEventListener('click', ()=>setTreino('B'));
+      document.getElementById('btnC').addEventListener('click', ()=>setTreino('C'));
+      document.getElementById('btnExpandAll').addEventListener('click', expandAll);
+      document.getElementById('btnCollapseAll').addEventListener('click', collapseAll);
+      document.getElementById('hideOptional').addEventListener('change', renderExercicios);
+      document.getElementById('btnSave').addEventListener('click', saveLocal);
+      document.getElementById('btnShare').addEventListener('click', shareOrCopy);
+      document.getElementById('btnClear').addEventListener('click', clearAll);
+      document.getElementById('btnExportAccum').addEventListener('click', exportAccum);
+      const copyBtn = document.getElementById('btnCopyLink'); if(copyBtn) copyBtn.addEventListener('click', copyLink);
+      const closeBtn = document.getElementById('btnCloseHelp'); if(closeBtn) closeBtn.addEventListener('click', hideInstallHelp);
+
+      // Data padrão hoje
+      $('#date').value = todayStr();
+      // Sugere treino por dia da semana (0=Dom ... 6=Sáb)
+      const dow = new Date().getDay();
+      if(dow===1) setTreino('A');
+      else if(dow===3) setTreino('B');
+      else if(dow===5) setTreino('C');
+      else { setTreino('A'); }
+      renderExercicios();
+      loadLocal();
+      updateLastExportLabel();
+      if(isLocal()){ const inp = document.getElementById('fileLink'); if(inp) inp.value = location.href; const box = document.getElementById('installHelp'); if(box) box.style.display = 'block'; }
+    })();
+  </script>
+</body>
+</html>
